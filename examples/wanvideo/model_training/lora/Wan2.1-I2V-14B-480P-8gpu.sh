@@ -1,6 +1,8 @@
+# export DIFFSYNTH_SKIP_DOWNLOAD=true
+
 accelerate launch --num_processes 8 examples/wanvideo/model_training/train.py \
-  --dataset_base_path data \
-  --dataset_metadata_path data/train.csv \
+  --dataset_base_path train_subset \
+  --dataset_metadata_path train_subset/train_subset.csv \
   --data_file_keys "video,input_image" \
   --height 480 \
   --width 832 \
