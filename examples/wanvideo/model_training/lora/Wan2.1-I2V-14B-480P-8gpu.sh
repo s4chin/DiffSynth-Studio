@@ -15,6 +15,7 @@ accelerate launch --num_processes 8 examples/wanvideo/model_training/train.py \
   --remove_prefix_in_ckpt "pipe.dit." \
   --output_path "./models/train/Wan2.1-I2V-14B-480P_lora" \
   --save_steps 500 \
+  --lora_checkpoint "$(ls -1 ./models/train/Wan2.1-I2V-14B-480P_lora/step-*.safetensors 2>/dev/null | sort -V | tail -n 1)" \
   --lora_base_model "dit" \
   --lora_target_modules "q,k,v,o,ffn.0,ffn.2" \
   --lora_rank 32 \
