@@ -1,8 +1,22 @@
-import os, torch
+import os
+import re
+import torch
 from tqdm import tqdm
 from accelerate import Accelerator
 from .training_module import DiffusionTrainingModule
 from .logger import ModelLogger
+
+
+def _infer_resume_step_from_checkpoint(checkpoint_path):
+    if not checkpoint_path:
+        return None
+    match = re.search(r"step-(\d+)", os.path.basename(checkpoint_path))
+    if match is None:
+        return None
+    try:
+        return int(match.group(1))
+    except ValueError:
+        return None
 
 
 def launch_training_task(
@@ -24,6 +38,14 @@ def launch_training_task(
         save_steps = args.save_steps
         num_epochs = args.num_epochs
     
+    resume_step = None
+    if args is not None:
+        resume_step = getattr(args, "resume_step", None)
+        if resume_step is None:
+            resume_step = _infer_resume_step_from_checkpoint(getattr(args, "lora_checkpoint", None))
+    if resume_step is not None and resume_step >= 0:
+        model_logger.num_steps = int(resume_step)
+
     optimizer = torch.optim.AdamW(model.trainable_modules(), lr=learning_rate, weight_decay=weight_decay)
     scheduler = torch.optim.lr_scheduler.ConstantLR(optimizer)
     dataloader = torch.utils.data.DataLoader(dataset, shuffle=True, collate_fn=lambda x: x[0], num_workers=num_workers)
