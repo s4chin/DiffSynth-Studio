@@ -58,7 +58,8 @@ def launch_training_task(
     model, optimizer, dataloader, scheduler = accelerator.prepare(model, optimizer, dataloader, scheduler)
     
     for epoch_id in range(num_epochs):
-        for data in tqdm(dataloader):
+        progress_bar = tqdm(dataloader, initial=model_logger.num_steps, total=model_logger.num_steps + len(dataloader), disable=not accelerator.is_main_process)
+        for data in progress_bar:
             with accelerator.accumulate(model):
                 optimizer.zero_grad()
                 if dataset.load_from_cache:
