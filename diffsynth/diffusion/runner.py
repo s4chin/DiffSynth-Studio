@@ -42,9 +42,14 @@ def launch_training_task(
     if args is not None:
         resume_step = getattr(args, "resume_step", None)
         if resume_step is None:
-            resume_step = _infer_resume_step_from_checkpoint(getattr(args, "lora_checkpoint", None))
+            lora_checkpoint = getattr(args, "lora_checkpoint", None)
+            resume_step = _infer_resume_step_from_checkpoint(lora_checkpoint)
+            if accelerator.is_main_process:
+                print(f"Inferred resume_step={resume_step} from lora_checkpoint={lora_checkpoint}")
     if resume_step is not None and resume_step >= 0:
         model_logger.num_steps = int(resume_step)
+        if accelerator.is_main_process:
+            print(f"Resuming training from step {model_logger.num_steps}")
 
     optimizer = torch.optim.AdamW(model.trainable_modules(), lr=learning_rate, weight_decay=weight_decay)
     scheduler = torch.optim.lr_scheduler.ConstantLR(optimizer)
