@@ -1,6 +1,6 @@
 export DIFFSYNTH_SKIP_DOWNLOAD=true
 
-accelerate launch --num_processes 8 examples/wanvideo/model_training/train.py \
+accelerate launch --num_processes 8 --mixed_precision bf16 examples/wanvideo/model_training/train.py \
   --task i2v \
   --dataset_base_path train_subset \
   --dataset_metadata_path train_subset/train_subset.csv \
@@ -13,6 +13,7 @@ accelerate launch --num_processes 8 examples/wanvideo/model_training/train.py \
   --learning_rate 1e-5 \
   --num_epochs 2 \
   --gradient_accumulation_steps 4 \
+  --use_gradient_checkpointing \
   --remove_prefix_in_ckpt "pipe.dit." \
   --output_path "./models/train/Wan2.1-I2V-1.3B_full" \
   --save_steps 500 \
