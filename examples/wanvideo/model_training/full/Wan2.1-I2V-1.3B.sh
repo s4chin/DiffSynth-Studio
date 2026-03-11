@@ -9,7 +9,8 @@ accelerate launch --num_processes 8 --mixed_precision bf16 examples/wanvideo/mod
   --width 832 \
   --dataset_repeat 100 \
   --dataset_num_workers 4 \
-  --model_id_with_origin_paths "Wan-AI/Wan2.1-T2V-1.3B:diffusion_pytorch_model*.safetensors,Wan-AI/Wan2.1-T2V-1.3B:models_t5_umt5-xxl-enc-bf16.pth,Wan-AI/Wan2.1-T2V-1.3B:Wan2.1_VAE.pth" \
+  --model_id_with_origin_paths "Wan-AI/Wan2.1-T2V-1.3B:models_t5_umt5-xxl-enc-bf16.pth,Wan-AI/Wan2.1-T2V-1.3B:Wan2.1_VAE.pth" \
+  --model_paths '{"dit": "./models/train/Wan2.1-I2V-1.3B_full/step-1500.safetensors"}' \
   --learning_rate 1e-5 \
   --num_epochs 2 \
   --gradient_accumulation_steps 4 \
@@ -18,3 +19,5 @@ accelerate launch --num_processes 8 --mixed_precision bf16 examples/wanvideo/mod
   --output_path "./models/train/Wan2.1-I2V-1.3B_full" \
   --save_steps 500 \
   --trainable_models "dit"
+
+  # --model_id_with_origin_paths "Wan-AI/Wan2.1-T2V-1.3B:diffusion_pytorch_model*.safetensors,Wan-AI/Wan2.1-T2V-1.3B:models_t5_umt5-xxl-enc-bf16.pth,Wan-AI/Wan2.1-T2V-1.3B:Wan2.1_VAE.pth" \
