@@ -56,6 +56,8 @@ class WanTrainingModule(DiffusionTrainingModule):
             "direct_distill:data_process": lambda pipe, *args: args,
             "sft": lambda pipe, inputs_shared, inputs_posi, inputs_nega: FlowMatchSFTLoss(pipe, **inputs_shared, **inputs_posi),
             "sft:train": lambda pipe, inputs_shared, inputs_posi, inputs_nega: FlowMatchSFTLoss(pipe, **inputs_shared, **inputs_posi),
+            "i2v": lambda pipe, inputs_shared, inputs_posi, inputs_nega: FlowMatchI2VLoss(pipe, **inputs_shared, **inputs_posi),
+            "i2v:train": lambda pipe, inputs_shared, inputs_posi, inputs_nega: FlowMatchI2VLoss(pipe, **inputs_shared, **inputs_posi),
             "direct_distill": lambda pipe, inputs_shared, inputs_posi, inputs_nega: DirectDistillLoss(pipe, **inputs_shared, **inputs_posi),
             "direct_distill:train": lambda pipe, inputs_shared, inputs_posi, inputs_nega: DirectDistillLoss(pipe, **inputs_shared, **inputs_posi),
         }
@@ -179,6 +181,8 @@ if __name__ == "__main__":
         "direct_distill:data_process": launch_data_process_task,
         "sft": launch_training_task,
         "sft:train": launch_training_task,
+        "i2v": launch_training_task,
+        "i2v:train": launch_training_task,
         "direct_distill": launch_training_task,
         "direct_distill:train": launch_training_task,
     }
