@@ -10,7 +10,7 @@ accelerate launch --num_processes 8 --mixed_precision bf16 examples/wanvideo/mod
   --dataset_repeat 100 \
   --dataset_num_workers 4 \
   --model_id_with_origin_paths "Wan-AI/Wan2.1-T2V-1.3B:models_t5_umt5-xxl-enc-bf16.pth,Wan-AI/Wan2.1-T2V-1.3B:Wan2.1_VAE.pth" \
-  --model_paths '{"dit": "./models/train/Wan2.1-I2V-1.3B_full/step-1500.safetensors"}' \
+  --model_paths '{"dit": "./models/train/Wan2.1-I2V-1.3B_full/step-3500.safetensors"}' \
   --learning_rate 1e-5 \
   --num_epochs 2 \
   --gradient_accumulation_steps 4 \
