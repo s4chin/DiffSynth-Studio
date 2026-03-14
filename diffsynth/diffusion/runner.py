@@ -1,3 +1,4 @@
+import json
 import os
 import re
 import torch
@@ -17,6 +18,23 @@ def _infer_resume_step_from_checkpoint(checkpoint_path):
         return int(match.group(1))
     except ValueError:
         return None
+
+
+def _infer_resume_step_from_model_paths(model_paths_json):
+    """Infer the resume step from --model_paths JSON (dict or list of paths)."""
+    if not model_paths_json:
+        return None
+    try:
+        model_paths = json.loads(model_paths_json)
+    except (json.JSONDecodeError, TypeError):
+        return None
+    paths = model_paths.values() if isinstance(model_paths, dict) else model_paths
+    best_step = None
+    for path in paths:
+        step = _infer_resume_step_from_checkpoint(path)
+        if step is not None and (best_step is None or step > best_step):
+            best_step = step
+    return best_step
 
 
 def launch_training_task(
@@ -46,6 +64,11 @@ def launch_training_task(
             resume_step = _infer_resume_step_from_checkpoint(lora_checkpoint)
             if accelerator.is_main_process:
                 print(f"Inferred resume_step={resume_step} from lora_checkpoint={lora_checkpoint}")
+        if resume_step is None:
+            model_paths = getattr(args, "model_paths", None)
+            resume_step = _infer_resume_step_from_model_paths(model_paths)
+            if accelerator.is_main_process:
+                print(f"Inferred resume_step={resume_step} from model_paths={model_paths}")
     if resume_step is not None and resume_step >= 0:
         model_logger.num_steps = int(resume_step)
         if accelerator.is_main_process:
